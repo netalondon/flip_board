@@ -55,6 +55,7 @@ class FlipCountdownClock extends StatelessWidget {
     EdgeInsets digitSpacing = const EdgeInsets.symmetric(horizontal: 2.0),
     this.onDone,
   })  : _showHours = duration.inHours > 0,
+        _showDays = duration.inDays > 0,
         _displayBuilder = FlipClockBuilder(
           digitSize: digitSize,
           width: width,
@@ -95,6 +96,7 @@ class FlipCountdownClock extends StatelessWidget {
   final FlipClockBuilder _displayBuilder;
 
   final bool _showHours;
+  final bool _showDays;
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +125,14 @@ class FlipCountdownClock extends StatelessWidget {
       return waitingZero;
     }).asBroadcastStream();
 
+    final daysDisplay = <Widget>[];
+    if (_showDays) {
+      daysDisplay.addAll([
+        _buildDaysDisplay(durationStream, duration),
+        _displayBuilder.buildSeparator(context),
+      ]);
+    }
+
     final hoursDisplay = <Widget>[];
     if (_showHours) {
       hoursDisplay.addAll([
@@ -133,6 +143,7 @@ class FlipCountdownClock extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        ...daysDisplay,
         ...hoursDisplay,
         _buildMinutesDisplay(durationStream, duration),
         _displayBuilder.buildSeparator(context),
@@ -140,6 +151,12 @@ class FlipCountdownClock extends StatelessWidget {
       ],
     );
   }
+
+  Widget _buildDaysDisplay(Stream<Duration> stream, Duration initValue) =>
+      _displayBuilder.buildTimePartDisplay(
+        stream.map((time) => time.inDays),
+        initValue.inDays,
+      );
 
   Widget _buildHoursDisplay(Stream<Duration> stream, Duration initValue) =>
       _displayBuilder.buildTimePartDisplay(

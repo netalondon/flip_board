@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../widget/flip_widget.dart';
@@ -99,31 +101,35 @@ class FlipClockBuilder {
   /// Defaults to null (transparent)
   final Color? hingeColor;
 
-  /// Spacing betwen digit panels.
+  /// Spacing between digit panels.
   final EdgeInsets digitSpacing;
 
   /// Builds a Flip display for a time part (hour, minute, second).
   ///
   /// Returns a Row with the decimal and unit digits of a time part,
   /// where each digit is a [FlipWidget].
-  Widget buildTimePartDisplay(Stream<int> timePartStream, int initValue) => Row(
-        children: [
-          _buildTensDisplay(timePartStream, initValue),
-          _buildUnitsDisplay(timePartStream, initValue),
-        ],
-      );
+  Widget buildTimePartDisplay(Stream<int> timePartStream, int initValue,
+      {int minDigits = 2}) {
+    final int digitNum = initValue.toString().length;
+    final int displayNum = max(digitNum, minDigits);
+    return Row(
+        children: List.generate(
+            displayNum,
+            (i) => _buildDigitDisplay(
+                timePartStream, initValue, displayNum - i - 1)));
+  }
 
-  Widget _buildTensDisplay(Stream<int> timePartStream, int initialValue) =>
-      _buildDisplay(
-        timePartStream.map<int>((value) => value ~/ 10),
-        initialValue ~/ 10,
-      );
+  int _getDigit(int num, int place) {
+    return num ~/ pow(10, place) % 10;
+  }
 
-  Widget _buildUnitsDisplay(Stream<int> timePartStream, int initialValue) =>
-      _buildDisplay(
-        timePartStream.map<int>((value) => value % 10),
-        initialValue % 10,
-      );
+  Widget _buildDigitDisplay(
+      Stream<int> timePartStream, int initialValue, int digitPlace) {
+    return _buildDisplay(
+      timePartStream.map<int>((value) => _getDigit(value, digitPlace)),
+      _getDigit(initialValue, digitPlace),
+    );
+  }
 
   Widget _buildDisplay(Stream<int> digitStream, int initialValue) => Column(
         mainAxisSize: MainAxisSize.min,
