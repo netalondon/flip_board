@@ -32,10 +32,11 @@ class FlipClock extends StatelessWidget {
   /// - digitSpacing defaults to horizontal: 2.0
   FlipClock({
     Key? key,
-    required double digitSize,
     required double width,
     required double height,
     AxisDirection flipDirection = AxisDirection.down,
+    TextStyle digitStyle = const TextStyle(),
+    TextStyle separatorStyle = const TextStyle(),
     Curve? flipCurve,
     Color? digitColor,
     Color? backgroundColor,
@@ -56,18 +57,17 @@ class FlipClock extends StatelessWidget {
         assert((borderWidth == null && borderColor == null) ||
             (showBorder == null || showBorder == true)),
         _displayBuilder = FlipClockBuilder(
-          digitSize: digitSize,
           width: width,
           height: height,
+          separatorStyle: separatorStyle,
+          digitStyle: digitStyle,
           flipDirection: flipDirection,
           flipCurve: flipCurve ??
               (flipDirection == AxisDirection.down
                   ? FlipWidget.bounceFastFlip
                   : FlipWidget.defaultFlip),
-          digitColor: digitColor,
           backgroundColor: backgroundColor,
           separatorWidth: separatorWidth ?? width / 3.0,
-          separatorColor: separatorColor,
           separatorBackgroundColor: separatorBackgroundColor,
           showBorder:
               showBorder ?? (borderColor != null || borderWidth != null),

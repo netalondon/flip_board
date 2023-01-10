@@ -12,15 +12,14 @@ class FlipClockBuilder {
   ///
   /// Default values should be defined in composing classes.
   const FlipClockBuilder({
-    required this.digitSize,
+    this.digitStyle = const TextStyle(),
+    this.separatorStyle = const TextStyle(),
     required this.width,
     required this.height,
     required this.flipDirection,
     this.flipCurve,
-    this.digitColor,
     this.backgroundColor,
     required this.separatorWidth,
-    this.separatorColor,
     this.separatorBackgroundColor,
     required this.showBorder,
     this.borderWidth,
@@ -31,9 +30,6 @@ class FlipClockBuilder {
     this.hingeColor,
     required this.digitSpacing,
   });
-
-  /// FontSize for clock digits.
-  final double digitSize;
 
   /// Width of each digit panel.
   final double width;
@@ -49,11 +45,6 @@ class FlipClockBuilder {
   /// If null FlipWidget.defaultAnimation will be used
   final Curve? flipCurve;
 
-  /// Digit color.
-  ///
-  /// Defaults to colorScheme.onPrimary
-  final Color? digitColor;
-
   /// Digit panel color (background color).
   ///
   /// Defauts to colorScheme.primary
@@ -63,11 +54,6 @@ class FlipClockBuilder {
   ///
   /// Defaults to digit width / 3
   final double separatorWidth;
-
-  /// Separator color to display a ":" between digit groups.
-  ///
-  /// Defaults to colorScheme.onPrimary
-  final Color? separatorColor;
 
   /// Separator background color where we display a ":" between digit groups.
   ///
@@ -103,6 +89,9 @@ class FlipClockBuilder {
 
   /// Spacing between digit panels.
   final EdgeInsets digitSpacing;
+
+  final TextStyle digitStyle;
+  final TextStyle separatorStyle;
 
   /// Builds a Flip display for a time part (hour, minute, second).
   ///
@@ -165,14 +154,7 @@ class FlipClockBuilder {
         width: width,
         height: height,
         alignment: Alignment.center,
-        child: Text(
-          digit == null ? ' ' : digit.toString(),
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: digitSize,
-            color: digitColor ?? Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
+        child: Text(digit == null ? ' ' : digit.toString(), style: digitStyle),
       );
 
   /// Builds a display separator for time parts.
@@ -193,10 +175,7 @@ class FlipClockBuilder {
               alignment: Alignment.center,
               child: Text(
                 ':',
-                style: TextStyle(
-                    fontSize: digitSize - 4,
-                    color: separatorColor ??
-                        Theme.of(context).colorScheme.onPrimary),
+                style: separatorStyle
               ),
             ),
           ),
